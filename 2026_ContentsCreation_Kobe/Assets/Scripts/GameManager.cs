@@ -3,10 +3,59 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½g
+    [SerializeField] private Transform ParentGhost;
+
+    //ï¿½^ï¿½[ï¿½Qï¿½bï¿½g
+    [SerializeField] private Transform Cube;
+
+    // ï¿½ï¿½ï¿½ï¿½pï¿½iï¿½xï¿½ï¿½ï¿½@ï¿½j
+    [SerializeField] private float _SightAngle;
+
+    // ï¿½ï¿½ï¿½Eï¿½ÌÅ‘å‹—ï¿½ï¿½
+    [SerializeField] private float _MaxDistance = float.PositiveInfinity;
+
+    #region Logic
+
+    /// <summary>
+    /// ï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½é‚©ï¿½Ç‚ï¿½ï¿½ï¿½
+    /// </summary>
+    public bool IsVisible()
+    {
+        //ï¿½ï¿½ï¿½gï¿½ÌˆÊ’u
+        var ParentGhostPos = ParentGhost.position;
+
+        //ï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½ÌˆÊ’u
+        var CubePos = Cube.position;
+
+        //ï¿½ï¿½ï¿½gï¿½ÌŒï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½Kï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½xï¿½Nï¿½gï¿½ï¿½)
+        var ParentGhostDir = ParentGhost.forward;
+
+        //ï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½Ü‚Å‚ÌŒï¿½ï¿½ï¿½ï¿½Æ‹ï¿½ï¿½ï¿½ï¿½ÌŒvï¿½Z
+        var CubeDir = CubePos - ParentGhostPos;
+        var CubeDistance = CubeDir.magnitude;
+
+
+        // cos(ï¿½ï¿½/2)ï¿½ï¿½vï¿½Z
+        var cosHalf = Mathf.Cos(_SightAngle / 2 * Mathf.Deg2Rad);
+
+        // ï¿½ï¿½ï¿½gï¿½Æƒ^ï¿½[ï¿½Qï¿½bï¿½gï¿½Ö‚ÌŒï¿½ï¿½ï¿½ï¿½Ì“ï¿½ÏŒvï¿½Z
+        // ï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½Ö‚ÌŒï¿½ï¿½ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½ï¿½ğ³‹Kï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Kï¿½vï¿½ï¿½ï¿½ï¿½ï¿½é‚±ï¿½Æ‚É’ï¿½ï¿½ï¿½
+        var innerProduct = Vector3.Dot(ParentGhostDir, CubeDir.normalized);
+
+        // ï¿½ï¿½ï¿½Eï¿½ï¿½ï¿½ï¿½
+        return innerProduct > cosHalf && CubeDistance < _MaxDistance;
+    }
+
+
+    #endregion
+
+
+}
     int minutes = 0;
     int seconds = 0;
 
-    // Œ^–¼FƒNƒ‰ƒX–¼
+    // ï¿½^ï¿½ï¿½ï¿½Fï¿½Nï¿½ï¿½ï¿½Xï¿½ï¿½
     TimerManager timerManager;
 
     private void Start()
@@ -16,10 +65,10 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        // ƒ^ƒCƒ}[
+        // ï¿½^ï¿½Cï¿½}ï¿½[
         (minutes,seconds) = timerManager.TimerCalc();
 
-        // ƒV[ƒ“‘JˆÚğŒ
+        // ï¿½Vï¿½[ï¿½ï¿½ï¿½Jï¿½Úï¿½ï¿½
         if (minutes <= 0 && seconds <= 0)
         {
             SceneManager.LoadScene("ClearScene");
