@@ -3,18 +3,26 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    int foundCount = 0;
+    int minutes = 0;
+    int seconds = 0;
+
+    // 型名：クラス名
+    TimerManager timerManager;
 
     private void Start()
     {
-        
+        timerManager = GetComponent<TimerManager>();
     }
 
     private void Update()
     {
-        if (foundCount == 3)
+        // タイマー
+        (minutes,seconds) = timerManager.TimerCalc();
+
+        // シーン遷移条件
+        if (minutes <= 0 && seconds <= 0)
         {
-            SceneManager.LoadScene("FailScene");
+            SceneManager.LoadScene("ClearScene");
         }
     }
 }
