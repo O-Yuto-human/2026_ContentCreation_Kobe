@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         
-        (minutes,seconds) = timerManager.TimerCalc();
+        (minutes,seconds) = timerManager.TimerCalc(); // ƒ^ƒvƒ‹‚Å“ñŒÂ’l‚ª•Ô‚Á‚Ä‚«‚½
 
         
         if (minutes <= 0 && seconds <= 0)

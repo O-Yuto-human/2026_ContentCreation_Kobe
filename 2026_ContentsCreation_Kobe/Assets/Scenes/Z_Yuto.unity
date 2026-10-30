@@ -153,6 +153,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
   navMeshAgent: {fileID: 0}
+  destinations:
+  - {x: 0, y: 0, z: 0}
+  - {x: 4, y: 0, z: 4}
+  - {x: 8, y: 0, z: 8}
+  - {x: 2, y: 0, z: 2}
+  - {x: 10, y: 0, z: 10}
 --- !u!195 &252154642
 NavMeshAgent:
   m_ObjectHideFlags: 0
