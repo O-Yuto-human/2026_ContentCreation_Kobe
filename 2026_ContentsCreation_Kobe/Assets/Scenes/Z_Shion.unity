@@ -269,6 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81991b1f86b079c4c9cdd1d004cc7314, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
+  playerBody: {fileID: 1823558722}
 --- !u!1 &1593310193
 GameObject:
   m_ObjectHideFlags: 0
@@ -522,6 +523,7 @@ GameObject:
   - component: {fileID: 1823558720}
   - component: {fileID: 1823558719}
   - component: {fileID: 1823558718}
+  - component: {fileID: 1823558723}
   m_Layer: 0
   m_Name: PlayerImage
   m_TagString: Untagged
@@ -650,6 +652,19 @@ Transform:
   - {fileID: 76953606}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1823558723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1823558717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f60eb347bd0c23049984717b1def1348, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  cameraObject: {fileID: 76953603}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
