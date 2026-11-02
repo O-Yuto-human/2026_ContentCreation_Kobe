@@ -51,7 +51,7 @@ public class GhostOutLook : MonoBehaviour
             if (hit.transform == player)
             {
                 IsPlayerFound = true;
-                Debug.Log("プレイヤー発見！");
+                
             }
             else
             {
