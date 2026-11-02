@@ -2,30 +2,34 @@ using UnityEngine;
 
 public class MouseController : MonoBehaviour
 {
-    const float MOUSE_SENSITIVITY = 1000.0f; // マウス感度
+    [SerializeField] private Transform player; // プレイヤーのオブジェクトを指定用
+    [SerializeField] private float distance = 5.0f; // プレイヤーからの距離
+    const float MOUSE_SENSITIVITY = 5.0f; // マウス感度
 
-    [SerializeField]Transform playerBody;   // プレイヤー全体の体
-    float xRotation = 0.0f;   //プレイヤーの視線の現在の上下の傾き
-
+    float yRotation = 0.0f;   // 左右の回転角度
 
     void Start()
     {
-        //マウスカーソルを画面中央に固定し、不可視にする(Unity実行中の場合Escキーで解除可能)
-        Cursor.lockState = CursorLockMode.Locked;   
+        // マウスカーソルを画面中央に固定し、不可視にする
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
-    void Update()
+    void LateUpdate()
     {
-        // マウスの移動量を取得
-        float mouseX = Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY * Time.deltaTime;
+        if (player == null) return;
 
-        // 上下の首振り
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f); // 真上や真後ろを向けないように制限
-        transform.localRotation = Quaternion.Euler(xRotation, 0.0f, 0.0f);
+        // マウスの左右の移動量を取得
+        float mouseX = Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY;
+        yRotation += mouseX;
 
-        // 左右の首振り（体ごと回転）
-        playerBody.Rotate(Vector3.up * mouseX);
+        // 回転の角度から、プレイヤーの周りを回る位置（座標）を計算する
+        Quaternion rotation = Quaternion.Euler(0.0f, yRotation, 0.0f);
+        Vector3 offset = rotation * new Vector3(0.0f, 2.0f, -distance); // 少し高さ(2.0)をつけて後ろから見上げる位置に配置
+
+        // カメラの位置を「プレイヤーの位置 + 計算したオフセット」に更新
+        transform.position = player.position + offset;
+
+        // 常にプレイヤーのほうを向かせる
+        transform.LookAt(player.position + Vector3.up * 1.5f); // プレイヤーの少し上のあたりを見る
     }
 }
