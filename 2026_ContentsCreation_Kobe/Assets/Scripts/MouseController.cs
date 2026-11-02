@@ -1,12 +1,16 @@
 using UnityEngine;
+using UnityEngine.InputSystem; // Input Systemを使うために必要
 
 public class MouseController : MonoBehaviour
 {
-    [SerializeField] private Transform player; // プレイヤーのオブジェクトを指定用
-    [SerializeField] private float distance = 5.0f; // プレイヤーからの距離
-    const float MOUSE_SENSITIVITY = 5.0f; // マウス感度
+    [SerializeField] private Transform player; // プレイヤーのオブジェクトを指定
+    const float DISTANCE = 5.0f; // プレイヤーからの距離
+    const float SENSITIVITY = 0.5f; // 視点感度
 
-    float yRotation = 0.0f;   // 左右の回転角度
+    private float yRotation = 0.0f;   // 左右の回転角度
+
+    [Header("カメラの固定アングル設定")]
+    [SerializeField] private float fixedPitch = 20.0f; // 見下ろす角度（数字が大きいほど上から見下ろす）
 
     void Start()
     {
@@ -18,18 +22,36 @@ public class MouseController : MonoBehaviour
     {
         if (player == null) return;
 
-        // マウスの左右の移動量を取得
-        float mouseX = Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY;
-        yRotation += mouseX;
+        float inputX = 0f;
 
-        // 回転の角度から、プレイヤーの周りを回る位置（座標）を計算する
-        Quaternion rotation = Quaternion.Euler(0.0f, yRotation, 0.0f);
-        Vector3 offset = rotation * new Vector3(0.0f, 2.0f, -distance); // 少し高さ(2.0)をつけて後ろから見上げる位置に配置
+        // 1. ゲームパッドが接続されているか確認して、右スティックの入力を取得
+        if (Gamepad.current != null)
+        {
+            Vector2 stickDelta = Gamepad.current.rightStick.ReadValue();
+            inputX += stickDelta.x * SENSITIVITY * 2.0f;
 
-        // カメラの位置を「プレイヤーの位置 + 計算したオフセット」に更新
-        transform.position = player.position + offset;
+            // 2. 左トリガーが押されている場合の処理
+            if (Gamepad.current.leftTrigger.wasPressedThisFrame)
+            {
+                // カメラの左右角度を、プレイヤーが向いている方向（Y軸の回転）に強制的に合わせる
+                // これにより、fixedPitch（高さや見下ろし角度）を変えずに背後に回ることができます
+                yRotation = player.eulerAngles.y;
+                
+            }
+        }
+
+        // トリガーが押されていない（または右スティックが入力された）場合は通常の回転を反映
+        yRotation += inputX;
+
+        // カメラの回転と位置を計算（通常の fixedPitch の高さを維持）
+        Quaternion rotation = Quaternion.Euler(fixedPitch, yRotation, 0.0f);
+        Vector3 targetPosition = player.position + Vector3.up * 1.0f; // プレイヤーの中心付近
+
+        // プレイヤーを中心としたオフセット位置を計算
+        Vector3 offset = rotation * new Vector3(0.0f, 0.0f, -DISTANCE);
+        transform.position = targetPosition + offset;
 
         // 常にプレイヤーのほうを向かせる
-        transform.LookAt(player.position + Vector3.up * 1.5f); // プレイヤーの少し上のあたりを見る
+        transform.LookAt(targetPosition);
     }
 }
