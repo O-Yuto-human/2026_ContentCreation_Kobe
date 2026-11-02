@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class GhostOutLook : MonoBehaviour
@@ -7,10 +8,10 @@ public class GhostOutLook : MonoBehaviour
 
     [Header("Ž‹–ìŠp")]
     [Range(0, 60)]
-    [SerializeField] private float sightAngle = 60f;
+    [SerializeField] private float SIGHT_ANGLE = 60f;
 
     [Header("Ž‹–ì‹——£")]
-    [SerializeField] private float sightDistance = 8f;
+    [SerializeField] private float SIGHT_DISTANCE = 8f;
 
         
 
@@ -33,19 +34,19 @@ public class GhostOutLook : MonoBehaviour
         Vector3 direction = player.position - transform.position;
 
         // ‹——£”»’è
-        if (direction.magnitude > sightDistance)
+        if (direction.magnitude > SIGHT_DISTANCE)
             return;
 
         // Šp“x”»’è
         float angle = Vector3.Angle(transform.forward, direction);
 
-        if (angle > sightAngle * 0.5f)
+        if (angle > SIGHT_ANGLE * 0.5f)
             return;
 
         // Ray‚ð”ò‚Î‚µ‚Ä•Ç‚ª‚ ‚é‚©”»’è
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, direction.normalized, out hit, sightDistance))
+        if (Physics.Raycast(transform.position, direction.normalized, out hit, SIGHT_DISTANCE))
         {
             if (hit.transform == player)
             {
