@@ -1,31 +1,57 @@
 using UnityEngine;
+using UnityEngine.InputSystem; // Input Systemを使うために必要
 
 public class MouseController : MonoBehaviour
 {
-    const float MOUSE_SENSITIVITY = 1000.0f; // マウス感度
+    [SerializeField] private Transform player; // プレイヤーのオブジェクトを指定
+    const float DISTANCE = 5.0f; // プレイヤーからの距離
+    const float SENSITIVITY = 0.5f; // 視点感度
 
-    [SerializeField]Transform playerBody;   // プレイヤー全体の体
-    float xRotation = 0.0f;   //プレイヤーの視線の現在の上下の傾き
+    private float yRotation = 0.0f;   // 左右の回転角度
 
+    [Header("カメラの固定アングル設定")]
+    [SerializeField] private float fixedPitch = 20.0f; // 見下ろす角度（数字が大きいほど上から見下ろす）
 
     void Start()
     {
-        //マウスカーソルを画面中央に固定し、不可視にする(Unity実行中の場合Escキーで解除可能)
-        Cursor.lockState = CursorLockMode.Locked;   
+        // マウスカーソルを画面中央に固定し、不可視にする
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
-    void Update()
+    void LateUpdate()
     {
-        // マウスの移動量を取得
-        float mouseX = Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY * Time.deltaTime;
+        if (player == null) return;
 
-        // 上下の首振り
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f); // 真上や真後ろを向けないように制限
-        transform.localRotation = Quaternion.Euler(xRotation, 0.0f, 0.0f);
+        float inputX = 0f;
 
-        // 左右の首振り（体ごと回転）
-        playerBody.Rotate(Vector3.up * mouseX);
+        // 1. ゲームパッドが接続されているか確認して、右スティックの入力を取得
+        if (Gamepad.current != null)
+        {
+            Vector2 stickDelta = Gamepad.current.rightStick.ReadValue();
+            inputX += stickDelta.x * SENSITIVITY * 2.0f;
+
+            // 2. 左トリガーが押されている場合の処理
+            if (Gamepad.current.leftTrigger.wasPressedThisFrame)
+            {
+                // カメラの左右角度を、プレイヤーが向いている方向（Y軸の回転）に強制的に合わせる
+                // これにより、fixedPitch（高さや見下ろし角度）を変えずに背後に回ることができます
+                yRotation = player.eulerAngles.y;
+                
+            }
+        }
+
+        // トリガーが押されていない（または右スティックが入力された）場合は通常の回転を反映
+        yRotation += inputX;
+
+        // カメラの回転と位置を計算（通常の fixedPitch の高さを維持）
+        Quaternion rotation = Quaternion.Euler(fixedPitch, yRotation, 0.0f);
+        Vector3 targetPosition = player.position + Vector3.up * 1.0f; // プレイヤーの中心付近
+
+        // プレイヤーを中心としたオフセット位置を計算
+        Vector3 offset = rotation * new Vector3(0.0f, 0.0f, -DISTANCE);
+        transform.position = targetPosition + offset;
+
+        // 常にプレイヤーのほうを向かせる
+        transform.LookAt(targetPosition);
     }
 }
