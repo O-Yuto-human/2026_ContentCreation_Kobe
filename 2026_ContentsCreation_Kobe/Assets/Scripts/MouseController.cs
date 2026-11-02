@@ -24,22 +24,19 @@ public class MouseController : MonoBehaviour
 
         float inputX = 0f;
 
-        // 1. ゲームパッドが接続されているか確認して、右スティックの入力を取得
+        // ゲームパッドが接続されているか確認
         if (Gamepad.current != null)
         {
             Vector2 stickDelta = Gamepad.current.rightStick.ReadValue();
             inputX += stickDelta.x * SENSITIVITY * 2.0f;
 
-            // 2. 左トリガーが押されている場合の処理
-            if (Gamepad.current.leftTrigger.wasPressedThisFrame)
+            if (Gamepad.current.leftTrigger.wasPressedThisFrame)    //左トリガーが押されている場合
             {
                 // カメラの左右角度を、プレイヤーが向いている方向（Y軸の回転）に強制的に合わせる
-                // これにより、fixedPitch（高さや見下ろし角度）を変えずに背後に回ることができます
                 yRotation = player.eulerAngles.y;
                 
             }
         }
-
         // トリガーが押されていない（または右スティックが入力された）場合は通常の回転を反映
         yRotation += inputX;
 
