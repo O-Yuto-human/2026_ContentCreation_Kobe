@@ -1,26 +1,44 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SocialPlatforms.Impl;
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private GameObject cameraObject = null;    // 視点移動用のカメラオブジェクト取得用
+
+    //-------定数宣言-------
     const float MOVE_SPEED = 7.0f;   //移動速度
 
+    const float INTERACT_DISTANCE = 3.0f; //インタラクト可能な距離
+
+    //-------変数宣言-------
+    [SerializeField] private GameObject cameraObject = null;    // 視点移動用のカメラオブジェクト取得用
+    int addScore = 0; //スコア加算用の変数
+
+    float p2eDistance = 0.0f;            //プレイヤーと敵の距離
+    Vector3 enemyPos = Vector3.zero;    //敵の座標
+    GameObject currentTarget = null;    //現在最も近いターゲット
+    
     void Update()
     {
         Move();
+        FindTarget();
+
+        if (Gamepad.current.aButton.wasPressedThisFrame && currentTarget != null)
+        {
+            Suprrized();
+        }
+
     }
 
     void Move()
     {
         // キーボード(WASD)とゲームパッド(左スティック)の入力をまとめて取得
-
         float inputX = Input.GetAxisRaw("Horizontal");      //A/Dキー または 左スティックの左右
-
         float inputZ = Input.GetAxisRaw("Vertical");        //W / Sキー または 左スティックの上下
 
         Vector3 moveVec = new Vector3(inputX, 0f, inputZ);
-
+        
         // 斜め移動量の正規化（スティックを斜めに倒したときに速くなりすぎないようにする）
-
         if (moveVec.magnitude > 1f)
         {
             moveVec.Normalize();
@@ -45,4 +63,61 @@ public class PlayerController : MonoBehaviour
             transform.forward = moveDir.normalized; // 進行方向に向きを変える
         }
     }
+
+    //最も近いターゲットを探す
+    void FindTarget()
+    {
+        List<GameObject> targets = new List<GameObject>();
+        targets.AddRange(GameObject.FindGameObjectsWithTag("Human"));
+        targets.AddRange(GameObject.FindGameObjectsWithTag("HiddenHuman"));
+        targets.AddRange(GameObject.FindGameObjectsWithTag("Trap")); // 3つ目のタグ例
+
+        GameObject nearest = null;
+        float maxDistance = INTERACT_DISTANCE;
+
+        foreach(var t in targets)
+        {
+            float distance = Vector3.Distance(transform.position, t.transform.position);
+
+            if(distance < maxDistance) //距離が最大距離より近い場合
+            {
+                nearest = t; //最も近いオブジェクトを更新
+                maxDistance = distance; //最大距離を更新
+            }
+        }
+        currentTarget = nearest; //最も近いオブジェクトを現在のターゲットとして設定
+    }
+
+    //驚かせる処理
+    void Suprrized()
+    {
+        p2eDistance = Vector3.Distance(transform.position, currentTarget.transform.position); //プレイヤーと敵の距離を取得
+        if(p2eDistance <= 3.0f) //距離が3m以内なら
+        {
+            //GetComponent.<イベントスクリプト>().イベント呼び出し関数(currentTarget.tag);
+
+            //以下の一文をイベント処理側に貼り付けて処理してほしい
+            //caseはこっちで引数として渡すから、イベント側で判定してスコア加算するようにしてクレメンス
+
+            //switch(currentTarget.tag)
+            //{
+            //    case "Human":
+            //        addScore += 10; //スコア加算
+            //        break;
+            //    case "HiddenHuman":
+            //        addScore += 20; //スコア加算
+            //        break;
+            //    case "Trap":
+            //        addScore += 5; //スコア加算
+            //        break;
+            //}
+        }
+
+    }
+
+    public int  AddScore()  //スコア加算時に呼び出す
+    {
+        return addScore;
+    }
+  
 }
