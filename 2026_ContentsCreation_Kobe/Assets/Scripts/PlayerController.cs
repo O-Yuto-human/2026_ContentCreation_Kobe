@@ -17,7 +17,23 @@ public class PlayerController : MonoBehaviour
     float p2eDistance = 0.0f;            //プレイヤーと敵の距離
     Vector3 enemyPos = Vector3.zero;    //敵の座標
     GameObject currentTarget = null;    //現在最も近いターゲット
-    
+
+
+    private void Start()
+    {
+        if (cameraObject == null)
+        {
+            Debug.Log("カメラオブジェクトが設定されていません");
+            QuitGame(); 
+        }
+        if(Gamepad.current == null)
+        {
+            Debug.Log("コントローラーが接続されていません");
+            QuitGame();
+        }
+
+    }
+
     void Update()
     {
         Move();
@@ -25,8 +41,9 @@ public class PlayerController : MonoBehaviour
 
         //if (Gamepad.current.aButton.wasPressedThisFrame && currentTarget != null)
         //{
+        if(Input.GetKeyDown(KeyCode.Space) && currentTarget != null) {
             Suprrized();
-        //}
+        }
 
     }
 
@@ -89,7 +106,6 @@ public class PlayerController : MonoBehaviour
     }
 
     //驚かせる処理
-    //驚かせる処理
     void Suprrized()
     {
         // currentTargetがnullの場合は処理を中断する
@@ -122,5 +138,17 @@ public class PlayerController : MonoBehaviour
     {
         return addScore;
     }
-  
+
+    //エラーが発生した場合や、致命的な問題が発生した場合にゲームを終了する関数
+    private void QuitGame()
+    {
+        //アプリを終了
+        Application.Quit();
+
+        // Unityエディタ上でのテストプレイ時でも自動で停止させる
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #endif
+    }
+
 }
