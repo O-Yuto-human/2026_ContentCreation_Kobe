@@ -23,10 +23,10 @@ public class PlayerController : MonoBehaviour
         Move();
         FindTarget();
 
-        if (Gamepad.current.aButton.wasPressedThisFrame && currentTarget != null)
-        {
+        //if (Gamepad.current.aButton.wasPressedThisFrame && currentTarget != null)
+        //{
             Suprrized();
-        }
+        //}
 
     }
 
@@ -89,30 +89,33 @@ public class PlayerController : MonoBehaviour
     }
 
     //驚かせる処理
+    //驚かせる処理
     void Suprrized()
     {
-        p2eDistance = Vector3.Distance(transform.position, currentTarget.transform.position); //プレイヤーと敵の距離を取得
-        if(p2eDistance <= 3.0f) //距離が3m以内なら
+        // currentTargetがnullの場合は処理を中断する
+        if (currentTarget == null)
         {
-            //GetComponent.<イベントスクリプト>().イベント呼び出し関数(currentTarget.tag);
-
-            //以下の一文をイベント処理側に貼り付けて処理してほしい
-            //caseはこっちで引数として渡すから、イベント側で判定してスコア加算するようにしてクレメンス
-
-            //switch(currentTarget.tag)
-            //{
-            //    case "Human":
-            //        addScore += 10; //スコア加算
-            //        break;
-            //    case "HiddenHuman":
-            //        addScore += 20; //スコア加算
-            //        break;
-            //    case "Trap":
-            //        addScore += 5; //スコア加算
-            //        break;
-            //}
+            return;
         }
 
+        p2eDistance = Vector3.Distance(transform.position, currentTarget.transform.position); //プレイヤーと敵の距離を取得
+        if (p2eDistance <= 3.0f) //距離が3m以内なら
+        {
+            //GetComponent<イベントスクリプト>().イベント呼び出し関数(currentTarget.tag);
+
+            switch (currentTarget.tag)
+            {
+                case "Human":
+                    Debug.Log("人間を驚かせた！");
+                    break;
+                case "HiddenHuman":
+                    Debug.Log("隠れている人間を驚かせた！");
+                    break;
+                case "Trap":
+                    Debug.Log("トラップを設置した！");
+                    break;
+            }
+        }
     }
 
     public int  AddScore()  //スコア加算時に呼び出す

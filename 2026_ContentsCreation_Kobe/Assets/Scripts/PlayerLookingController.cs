@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem; // Input Systemを使うために必要
 
-public class MouseController : MonoBehaviour
+public class PlayerLookingController : MonoBehaviour
 {
     [SerializeField] private Transform player; // プレイヤーのオブジェクトを指定
     const float DISTANCE = 5.0f; // プレイヤーからの距離
