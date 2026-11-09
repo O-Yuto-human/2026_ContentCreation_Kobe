@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class TimerManager : MonoBehaviour
 {
-    float timer = 300.0f;
     int minutes = 0;
     int seconds = 0;
+    float timer = 300.0f;
 
     public (int,int) TimerCalc() // ƒ^ƒvƒ‹(2ŒÂ’l‚ð•Ô‚·)
     {
