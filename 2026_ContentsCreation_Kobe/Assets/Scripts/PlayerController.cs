@@ -93,7 +93,6 @@ public class PlayerController : MonoBehaviour
         List<GameObject> targets = new List<GameObject>();
         targets.AddRange(GameObject.FindGameObjectsWithTag("Human"));
         targets.AddRange(GameObject.FindGameObjectsWithTag("HiddenHuman"));
-        targets.AddRange(GameObject.FindGameObjectsWithTag("Trap")); // 3つ目のタグ例
 
         GameObject nearest = null;
         float maxDistance = INTERACT_DISTANCE;
@@ -157,14 +156,14 @@ public class PlayerController : MonoBehaviour
             {
                 case "Human":
                     Debug.Log("人間を驚かせた！");
+                    addScore += 100; //スコア加算
                     break;
                 case "HiddenHuman":
                     Debug.Log("隠れている人間を驚かせた！");
-                    break;
-                case "Trap":
-                    Debug.Log("トラップを設置した！");
+                    addScore += 200; //スコア加算
                     break;
             }
+            currentTarget.GetComponent<HumanReaction>().GetTag(currentTarget.tag); //アニメーション再生
         }
     }
 
