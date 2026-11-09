@@ -26,11 +26,11 @@ public class PlayerController : MonoBehaviour
             Debug.Log("カメラオブジェクトが設定されていません");
             QuitGame(); 
         }
-        if(Gamepad.current == null)
+        /*if(Gamepad.current == null)
         {
             Debug.Log("コントローラーが接続されていません");
             QuitGame();
-        }
+        }*/
 
     }
 
