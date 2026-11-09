@@ -4,11 +4,11 @@ using System.Collections;
 
 public class HumanAI : MonoBehaviour
 {
-    [SerializeField] Vector3[] destinations;
+    [SerializeField] Vector3[] destinations; // 目的地
     [SerializeField] Vector3[] exitPoints;
     [SerializeField] NavMeshAgent navMeshAgent;
-    [SerializeField] bool isHidden;
-    float escapeSpeed = 6;
+    float escapeSpeed = 6.0f;
+    float normalSpeed = 1.0f;
     int num = 0;
     int exitNum = 0;
 
@@ -16,16 +16,17 @@ public class HumanAI : MonoBehaviour
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
 
-        if (!isHidden)
+        if (CompareTag("Human"))
         {
-            SetRandomDestination(Random.Range(0, destinations.Length));
+            SetRandomDestination();
         }
     }
 
     public int HumanMoveSystem()
     {
         // 経路の計算が終わっているかつ、目的地までの残り距離が停止距離以下なら
-        if (!navMeshAgent.pathPending &&        // 目的地までの経路を計算中ではないかつ(bool)
+        if (navMeshAgent.hasPath &&             // 目的地までの経路を持っているかつ
+            !navMeshAgent.pathPending &&        // 目的地までの経路を計算中ではないかつ(bool)
             navMeshAgent.remainingDistance <=   // 目的地までの残りの距離
             navMeshAgent.stoppingDistance)      // 目的地に到着したとみなす距離
         {
@@ -39,10 +40,11 @@ public class HumanAI : MonoBehaviour
     }
 
     // 目的地設定
-    public void SetRandomDestination(int _value)
+    public void SetRandomDestination()
     {
+        num = Random.Range(0, destinations.Length);
         // NavMeshAgentに、指定した座標まで移動する目的地を設定する
-        navMeshAgent.SetDestination(destinations[_value]);
+        navMeshAgent.SetDestination(destinations[num]);
     }
 
     // 巡回中の待機処理
@@ -55,7 +57,7 @@ public class HumanAI : MonoBehaviour
         navMeshAgent.isStopped = false;
 
         num = Random.Range(0, destinations.Length);
-        SetRandomDestination(num);
+        SetRandomDestination();
     }
 
     // 逃げにつなげる処理
@@ -75,9 +77,12 @@ public class HumanAI : MonoBehaviour
     // 発見されたとき
     public bool IsEscaped()
     {
-        if (!navMeshAgent.pathPending &&
-            navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
+        if (navMeshAgent.hasPath && // 経路を持っているか
+            !navMeshAgent.pathPending && // 経路を計算中か
+            navMeshAgent.pathStatus == NavMeshPathStatus.PathComplete && // 経路が完成しているか
+            navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance) // 到着とみなしていい距離か
         {
+            navMeshAgent.speed = normalSpeed;
             return true;
         }
 
