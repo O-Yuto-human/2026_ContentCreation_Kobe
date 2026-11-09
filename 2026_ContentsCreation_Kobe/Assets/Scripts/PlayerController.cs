@@ -189,7 +189,6 @@ public class PlayerController : MonoBehaviour
                     addScore = currentTarget.GetComponent<TrapManager>().TrapActivate(); //トラップ起動
                     break;
             }
-            
         }
     }
 
