@@ -25,10 +25,13 @@ public class GameManager : MonoBehaviour
 
     int minutes = 0;
     int seconds = 0;
-    int peopleNum = 6;
+    float[] respawnTime;
     bool[] isFleeing;
     bool[] isPatrolling;
     bool isSpawned; // テスト用
+    bool[] isDespawned;
+
+    const float RESPAWN_TIME = 3.0f;
 
     [SerializeField] HumanAI[] humanAI = null;
     [SerializeField] GameObject cameraObject = null;
@@ -44,6 +47,8 @@ public class GameManager : MonoBehaviour
         humanStates = new HumanStates[humanAI.Length];
         isFleeing = new bool[humanAI.Length];
         isPatrolling = new bool[humanAI.Length];
+        respawnTime = new float[humanAI.Length];
+        isDespawned = new bool[humanAI.Length];
 
         /*if (cameraObject == null)
         {
@@ -58,11 +63,11 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < humanAI.Length; i++)
         {
-            if (humanAI[i].tag == "Human")
+            if (humanAI[i].CompareTag("Human"))
             {
                 humanStates[i] = HumanStates.Patrol;
             }
-            else if (humanAI[i].tag == "HiddenHuman")
+            else if (humanAI[i].CompareTag("HiddenHuman"))
             {
                 humanStates[i] = HumanStates.Hidden;
             }
@@ -113,12 +118,39 @@ public class GameManager : MonoBehaviour
                             }
                             if (humanAI[i].IsEscaped())
                             {
+                                isFleeing[i] = false;
                                 humanStates[i] = HumanStates.Escaped;
                             }
                             break;
 
                         case HumanStates.Escaped:
-                            break;
+                            if (isDespawned[i] == true)
+                            {
+                                humanAI[i].gameObject.SetActive(false);
+                                respawnTime[i] = spawnSystem.RespawnTimer(i);
+
+                                if (respawnTime[i] <= 0)
+                                {
+                                    spawnSystem.Respawn(i);
+                                    humanAI[i].gameObject.SetActive(true);
+                                    isDespawned[i] = false;
+
+                                    if (humanAI[i].CompareTag("Human"))
+                                    {
+                                        humanAI[i].SetRandomDestination(); // 再度目的地設定し、コルーチンの影響を無効に
+                                        humanStates[i] = HumanStates.Patrol;
+                                    }
+                                    else if (humanAI[i].CompareTag("HiddenHuman"))
+                                    {
+                                        humanStates[i] = HumanStates.Hidden;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                isDespawned[i] = true;
+                            }
+                                break;
                     }
                 }
 
