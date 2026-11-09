@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -18,6 +19,8 @@ public class PlayerController : MonoBehaviour
     Vector3 enemyPos = Vector3.zero;    //敵の座標
     GameObject currentTarget = null;    //現在最も近いターゲット
 
+    bool isFreeze = false; //プレイヤーの硬直判定を管理する変数(初期値false = 移動可能)
+
 
     private void Start()
     {
@@ -36,13 +39,16 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        Move();
-        FindTarget();
+        if(isFreeze == false)
+        {
+            Move();
+            FindTarget();
+        }
 
         //if (Gamepad.current.aButton.wasPressedThisFrame && currentTarget != null)
         //{
         if(Input.GetKeyDown(KeyCode.Space) && currentTarget != null) {
-            Suprrized();
+            Surprised();
         }
 
     }
@@ -105,8 +111,36 @@ public class PlayerController : MonoBehaviour
         currentTarget = nearest; //最も近いオブジェクトを現在のターゲットとして設定
     }
 
+    public void WasFound(int found_count)
+    {
+        float freezeTime = 0.0f;
+
+        if (found_count == 1)
+        {
+            freezeTime = 5.0f;
+        }
+        else if (found_count == 2)
+        {
+            freezeTime = 10.0f;
+        }
+
+        if (freezeTime > 0.0f)
+        {
+            StartCoroutine(FreezeCoroutine(freezeTime));
+        }
+    }
+
+    // 一定時間プレイヤーを硬直させるコルーチン
+    private IEnumerator FreezeCoroutine(float duration)
+    {
+        isFreeze = true;
+        yield return new WaitForSeconds(duration);
+        isFreeze = false;
+    }
+
+
     //驚かせる処理
-    void Suprrized()
+    void Surprised()
     {
         // currentTargetがnullの場合は処理を中断する
         if (currentTarget == null)
