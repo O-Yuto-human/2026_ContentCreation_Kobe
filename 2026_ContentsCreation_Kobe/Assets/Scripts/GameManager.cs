@@ -25,21 +25,25 @@ public class GameManager : MonoBehaviour
 
     int minutes = 0;
     int seconds = 0;
+    int peopleNum = 6;
     bool[] isFleeing;
     bool[] isPatrolling;
+    bool isSpawned; // テスト用
 
     [SerializeField] HumanAI[] humanAI = null;
     [SerializeField] GameObject cameraObject = null;
+
     TimerManager timerManager;
+    SpawnSystem spawnSystem;
 
     private void Start()
     {
+        spawnSystem = GetComponent<SpawnSystem>();
         timerManager = GetComponent<TimerManager>();
         playState = PlayState.Game; // Title
         humanStates = new HumanStates[humanAI.Length];
         isFleeing = new bool[humanAI.Length];
         isPatrolling = new bool[humanAI.Length];
-        bool isHidden;
 
         /*if (cameraObject == null)
         {
@@ -54,14 +58,13 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < humanAI.Length; i++)
         {
-            isHidden = humanAI[i].IsHidden();
-            if (isHidden)
-            {
-                humanStates[i] = HumanStates.Hidden;
-            }
-            else
+            if (humanAI[i].tag == "Human")
             {
                 humanStates[i] = HumanStates.Patrol;
+            }
+            else if (humanAI[i].tag == "HiddenHuman")
+            {
+                humanStates[i] = HumanStates.Hidden;
             }
         }
     }
@@ -77,6 +80,12 @@ public class GameManager : MonoBehaviour
                 break;
 
             case PlayState.Game:
+                if (isSpawned == false)
+                {
+                    spawnSystem.FirstSpawn();
+                    isSpawned = true;
+                }
+
                 for (int i = 0; i < humanAI.Length; i++)
                 {
                     switch (humanStates[i])
