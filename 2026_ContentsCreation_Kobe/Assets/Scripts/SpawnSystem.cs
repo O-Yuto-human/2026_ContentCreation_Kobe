@@ -2,15 +2,16 @@ using UnityEngine;
 
 public class SpawnSystem : MonoBehaviour
 {
+    int[] spawnNum;
+    int peopleNum = 6;
+    float[] respawnTimer;
+    bool[] isUsed4H;
+    bool[] isUsed4HH;
+
     [SerializeField] Vector3[] spawnPos4H;
     [SerializeField] Vector3[] spawnPos4HH;
     [SerializeField] Vector3[] respawnPos;
     [SerializeField] GameObject[] human;
-    bool[] isUsed4H;
-    bool[] isUsed4HH;
-    int[] spawnNum;
-    int peopleNum = 6;
-    float[] respawnTimer;
 
     private void Start()
     {

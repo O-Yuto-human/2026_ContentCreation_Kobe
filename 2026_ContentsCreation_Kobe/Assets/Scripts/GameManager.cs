@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -174,7 +173,8 @@ public class GameManager : MonoBehaviour
     }
 
     // HumanAI.csで設定したコルーチンを受け取って、終わったかチェック
-    IEnumerator PatrolRoutine(int _index)
+
+    private IEnumerator PatrolRoutine(int _index)
     {
         yield return StartCoroutine(humanAI[_index].PatrolCoroutine());
 
