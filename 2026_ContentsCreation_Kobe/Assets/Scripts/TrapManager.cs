@@ -24,7 +24,8 @@ public class TrapManager : MonoBehaviour
             return 0; // スコア加算なし
         }
 
-        switch(trap_type){
+        switch(trap_type)   //トラップの種類に応じて処理を分岐
+        {  
             case "Phone":
                 Debug.Log("電話を鳴らした");
                 break;
