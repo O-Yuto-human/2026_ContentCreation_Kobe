@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
         isPatrolling = new bool[humanAI.Length];
         bool isHidden;
 
-        if (cameraObject == null)
+        /*if (cameraObject == null)
         {
             Debug.Log("カメラオブジェクトが設定されていません");
             QuitGame();
@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("コントローラーが接続されていません");
             QuitGame();
-        }
+        }*/
 
         for (int i = 0; i < humanAI.Length; i++)
         {
