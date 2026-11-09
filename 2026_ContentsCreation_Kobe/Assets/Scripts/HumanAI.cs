@@ -22,18 +22,6 @@ public class HumanAI : MonoBehaviour
         }
     }
 
-    public bool IsHidden()
-    {
-        if (isHidden)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     public int HumanMoveSystem()
     {
         // 経路の計算が終わっているかつ、目的地までの残り距離が停止距離以下なら
