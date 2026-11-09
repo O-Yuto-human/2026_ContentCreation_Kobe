@@ -25,21 +25,30 @@ public class GameManager : MonoBehaviour
 
     int minutes = 0;
     int seconds = 0;
+    float[] respawnTime;
     bool[] isFleeing;
     bool[] isPatrolling;
+    bool isSpawned; // テスト用
+    bool[] isDespawned;
+
+    const float RESPAWN_TIME = 3.0f;
 
     [SerializeField] HumanAI[] humanAI = null;
     [SerializeField] GameObject cameraObject = null;
+
     TimerManager timerManager;
+    SpawnSystem spawnSystem;
 
     private void Start()
     {
+        spawnSystem = GetComponent<SpawnSystem>();
         timerManager = GetComponent<TimerManager>();
         playState = PlayState.Game; // Title
         humanStates = new HumanStates[humanAI.Length];
         isFleeing = new bool[humanAI.Length];
         isPatrolling = new bool[humanAI.Length];
-        bool isHidden;
+        respawnTime = new float[humanAI.Length];
+        isDespawned = new bool[humanAI.Length];
 
         /*if (cameraObject == null)
         {
@@ -54,14 +63,13 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < humanAI.Length; i++)
         {
-            isHidden = humanAI[i].IsHidden();
-            if (isHidden)
-            {
-                humanStates[i] = HumanStates.Hidden;
-            }
-            else
+            if (humanAI[i].CompareTag("Human"))
             {
                 humanStates[i] = HumanStates.Patrol;
+            }
+            else if (humanAI[i].CompareTag("HiddenHuman"))
+            {
+                humanStates[i] = HumanStates.Hidden;
             }
         }
     }
@@ -77,6 +85,12 @@ public class GameManager : MonoBehaviour
                 break;
 
             case PlayState.Game:
+                if (isSpawned == false)
+                {
+                    spawnSystem.FirstSpawn();
+                    isSpawned = true;
+                }
+
                 for (int i = 0; i < humanAI.Length; i++)
                 {
                     switch (humanStates[i])
@@ -104,12 +118,39 @@ public class GameManager : MonoBehaviour
                             }
                             if (humanAI[i].IsEscaped())
                             {
+                                isFleeing[i] = false;
                                 humanStates[i] = HumanStates.Escaped;
                             }
                             break;
 
                         case HumanStates.Escaped:
-                            break;
+                            if (isDespawned[i] == true)
+                            {
+                                humanAI[i].gameObject.SetActive(false);
+                                respawnTime[i] = spawnSystem.RespawnTimer(i);
+
+                                if (respawnTime[i] <= 0)
+                                {
+                                    spawnSystem.Respawn(i);
+                                    humanAI[i].gameObject.SetActive(true);
+                                    isDespawned[i] = false;
+
+                                    if (humanAI[i].CompareTag("Human"))
+                                    {
+                                        humanAI[i].SetRandomDestination(); // 再度目的地設定し、コルーチンの影響を無効に
+                                        humanStates[i] = HumanStates.Patrol;
+                                    }
+                                    else if (humanAI[i].CompareTag("HiddenHuman"))
+                                    {
+                                        humanStates[i] = HumanStates.Hidden;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                isDespawned[i] = true;
+                            }
+                                break;
                     }
                 }
 
