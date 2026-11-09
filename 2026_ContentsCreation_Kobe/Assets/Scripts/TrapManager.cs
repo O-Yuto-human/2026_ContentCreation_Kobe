@@ -16,12 +16,21 @@ public class TrapManager : MonoBehaviour
     }
 
     // トラップを発動する関数
-    public int TrapActivate()
+    public int TrapActivate(string trap_type)
     {
         if (isCoolingDown)
         {
             Debug.Log("トラップは現在クールタイム中です");
             return 0; // スコア加算なし
+        }
+
+        switch(trap_type){
+            case "Phone":
+                Debug.Log("電話を鳴らした");
+                break;
+            case "LightDown":
+                Debug.Log("照明を消した");
+                break;
         }
 
         List<GameObject> targets = new List<GameObject>();  // ターゲットを格納するリスト

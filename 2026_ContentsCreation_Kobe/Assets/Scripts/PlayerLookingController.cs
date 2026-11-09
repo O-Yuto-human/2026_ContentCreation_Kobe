@@ -19,9 +19,9 @@ public class PlayerLookingController : MonoBehaviour
 
     void LateUpdate()
     {
-        PlayerLookking();
+        PlayerLooking();
     }
-    void PlayerLookking()   // GameManagerから呼び出し(必ずLateUpdateで呼び出すこと！)
+    public void PlayerLooking()   // GameManagerから呼び出し(必ずLateUpdateで呼び出すこと！)
     {
         if (player == null) return;
 

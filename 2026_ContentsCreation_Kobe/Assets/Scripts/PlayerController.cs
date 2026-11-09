@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    void PlayerMovement() //GameManagerから呼び出し
+    public void PlayerMovement() //GameManagerから呼び出し
     {
         if (isFreeze == false)
         {
@@ -186,7 +186,7 @@ public class PlayerController : MonoBehaviour
                     break;
                 case "Trap":
                     Debug.Log("トラップを起動した");
-                    addScore = currentTarget.GetComponent<TrapManager>().TrapActivate(); //トラップ起動
+                    addScore = currentTarget.GetComponent<TrapManager>().TrapActivate(currentTarget.name); //トラップ起動
                     break;
             }
         }
