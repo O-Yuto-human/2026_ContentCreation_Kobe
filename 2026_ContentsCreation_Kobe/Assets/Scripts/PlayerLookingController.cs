@@ -19,6 +19,10 @@ public class PlayerLookingController : MonoBehaviour
 
     void LateUpdate()
     {
+        PlayerLookking();
+    }
+    void PlayerLookking()   // GameManagerから呼び出し(必ずLateUpdateで呼び出すこと！)
+    {
         if (player == null) return;
 
         float inputX = 0f;
@@ -33,7 +37,7 @@ public class PlayerLookingController : MonoBehaviour
             {
                 // カメラの左右角度を、プレイヤーが向いている方向（Y軸の回転）に強制的に合わせる
                 yRotation = player.eulerAngles.y;
-                
+
             }
         }
         // トリガーが押されていない（または右スティックが入力された）場合は通常の回転を反映

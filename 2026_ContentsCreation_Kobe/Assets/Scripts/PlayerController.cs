@@ -37,9 +37,10 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    void Update()
+
+    void PlayerMovement() //GameManagerから呼び出し
     {
-        if(isFreeze == false)
+        if (isFreeze == false)
         {
             Move();
             FindTarget();
@@ -47,11 +48,29 @@ public class PlayerController : MonoBehaviour
 
         //if (Gamepad.current.aButton.wasPressedThisFrame && currentTarget != null)
         //{
-        if(Input.GetKeyDown(KeyCode.Space) && currentTarget != null) {
+        if (Input.GetKeyDown(KeyCode.Space) && currentTarget != null)
+        {
             Surprised();
         }
-
     }
+
+    private void Update()
+    {
+        if (isFreeze == false)
+        {
+            Move();
+            FindTarget();
+        }
+
+        //if (Gamepad.current.aButton.wasPressedThisFrame && currentTarget != null)
+        //{
+        if (Input.GetKeyDown(KeyCode.Space) && currentTarget != null)
+        {
+            Surprised();
+        }
+    }
+
+
 
     void Move()
     {
@@ -93,7 +112,7 @@ public class PlayerController : MonoBehaviour
         List<GameObject> targets = new List<GameObject>();
         targets.AddRange(GameObject.FindGameObjectsWithTag("Human"));
         targets.AddRange(GameObject.FindGameObjectsWithTag("HiddenHuman"));
-        targets.AddRange(GameObject.FindGameObjectsWithTag("Trap")); // 3つ目のタグ例
+        targets.AddRange(GameObject.FindGameObjectsWithTag("Trap"));
 
         GameObject nearest = null;
         float maxDistance = INTERACT_DISTANCE;
@@ -156,24 +175,29 @@ public class PlayerController : MonoBehaviour
             switch (currentTarget.tag)
             {
                 case "Human":
-                    Debug.Log("人間を驚かせた！");
+                    Debug.Log("人間を驚かせた");
+                    addScore = 100; //スコア加算
+                    currentTarget.GetComponent<HumanReaction>().GetTag(currentTarget.tag);
                     break;
                 case "HiddenHuman":
-                    Debug.Log("隠れている人間を驚かせた！");
+                    Debug.Log("隠れている人間を驚かせた");
+                    addScore = 200; //スコア加算
+                    currentTarget.GetComponent<HumanReaction>().GetTag(currentTarget.tag);
                     break;
                 case "Trap":
-                    Debug.Log("トラップを設置した！");
+                    Debug.Log("トラップを起動した");
+                    addScore = currentTarget.GetComponent<TrapManager>().TrapActivate(); //トラップ起動
                     break;
             }
         }
     }
 
-    public int  AddScore()  //スコア加算時に呼び出す
+    public int  AddScore()  //スコア加算時にGameManagerから呼び出す
     {
         return addScore;
     }
 
-    //エラーが発生した場合や、致命的な問題が発生した場合にゲームを終了する関数
+    //エラーが発生した場合や、致命的な問題が発生した場合にゲームを終了する関数  
     private void QuitGame()
     {
         //アプリを終了
