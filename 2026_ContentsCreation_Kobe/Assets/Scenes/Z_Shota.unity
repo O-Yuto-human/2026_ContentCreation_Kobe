@@ -718,9 +718,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d02048235468ea40986f3ecadabf6ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GhostOutlook
+  wayPointMove: {fileID: 1475800310}
   player: {fileID: 613687363}
   SIGHT_ANGLE: 60
   SIGHT_DISTANCE: 8
+  StopTime: 1
 --- !u!136 &1475800308
 CapsuleCollider:
   m_ObjectHideFlags: 0

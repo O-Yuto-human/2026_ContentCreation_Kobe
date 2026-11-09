@@ -6,10 +6,11 @@ public class WayPointMove : MonoBehaviour
     //チャックポイント
     [SerializeField]
     public Transform[] CheckPoints;//チェックポイントの情報を配列で保管(座標、回転、大きさ)
+    //今回は4つあるので、インスペクター上で設定する
 
     //移動速度
     [SerializeField]
-    private float PLAYER_SPEED = 2.0f;//親ゴーストの移動速度
+    public float PLAYER_SPEED = 2.0f;//親ゴーストの移動速度
 
     //次のチェックポイント
     private int CurrentPoint = 0;//現在進行しているチェックポイント

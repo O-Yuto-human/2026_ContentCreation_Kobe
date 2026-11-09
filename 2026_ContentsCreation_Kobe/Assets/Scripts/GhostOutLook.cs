@@ -1,8 +1,15 @@
+
+
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class GhostOutLook : MonoBehaviour
 {
+    [SerializeField]
+    private WayPointMove wayPointMove;
+
+
     [Header("プレイヤー")]
     [SerializeField] private Transform player;
 
@@ -13,14 +20,37 @@ public class GhostOutLook : MonoBehaviour
     [Header("視野距離")]
     [SerializeField] private float SIGHT_DISTANCE = 8f;
 
-        
+    [SerializeField]
+    private float StopTime = 1.0f;
 
-    // プレイヤーを見つけたか
+    private bool hasDetected = false;   // 一度検知したか
+    private bool isStopping = false;    // 停止中か
+
+    private float Timer = 0.0f;
+    private float originSpeed;
     public bool IsPlayerFound { get; private set; }
+
+    void Start()
+    {
+        wayPointMove = GetComponent<WayPointMove>();
+        originSpeed = wayPointMove.PLAYER_SPEED;
+
+    }
 
     void Update()
     {
         CheckSight();
+
+        if (isStopping)
+        {
+            Timer += Time.deltaTime;
+
+            if (Timer >= StopTime)
+            {
+                wayPointMove.PLAYER_SPEED = originSpeed;
+                isStopping = false;
+            }
+        }
     }
 
     void CheckSight()
@@ -48,14 +78,28 @@ public class GhostOutLook : MonoBehaviour
 
         if (Physics.Raycast(transform.position, direction.normalized, out hit, SIGHT_DISTANCE))
         {
+            Timer += Time.deltaTime;
             if (hit.transform == player)
             {
                 IsPlayerFound = true;
-                
+
+                // 初めて見つけた瞬間だけ
+                if (!hasDetected)
+                {
+                    hasDetected = true;
+
+                    wayPointMove.PLAYER_SPEED = 0.0f;
+
+                    isStopping = true;
+                    Timer = 0.0f;
+                }
             }
             else
             {
                 IsPlayerFound = false;
+
+                // 見失ったら次回また停止できるようにする
+                hasDetected = false;
             }
         }
     }
