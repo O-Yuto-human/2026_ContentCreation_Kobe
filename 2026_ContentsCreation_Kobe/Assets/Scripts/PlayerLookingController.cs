@@ -5,12 +5,11 @@ public class PlayerLookingController : MonoBehaviour
 {
     [SerializeField] private Transform player; // プレイヤーのオブジェクトを指定
     const float DISTANCE = 5.0f; // プレイヤーからの距離
-    const float SENSITIVITY = 0.5f; // 視点感度
+    const float SENSITIVITY = 1000f; // 視点感度
 
     private float yRotation = 0.0f;   // 左右の回転角度
 
-    [Header("カメラの固定アングル設定")]
-    [SerializeField] private float fixedPitch = 20.0f; // 見下ろす角度（数字が大きいほど上から見下ろす）
+    [SerializeField] private float fixedPitch = 20.0f; // 見下ろす角度
 
     void Start()
     {
