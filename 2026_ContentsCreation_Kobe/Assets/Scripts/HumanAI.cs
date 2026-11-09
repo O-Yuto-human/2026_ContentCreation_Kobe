@@ -12,7 +12,7 @@ public class HumanAI : MonoBehaviour
     int num = 0;
     int exitNum = 0;
 
-    public void Start()
+    private void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
 
@@ -84,6 +84,7 @@ public class HumanAI : MonoBehaviour
         navMeshAgent.SetDestination(exitPoints[exitNum]);
     }
 
+    // ”­Œ©‚³‚ê‚½‚Æ‚«
     public bool IsEscaped()
     {
         if (!navMeshAgent.pathPending &&

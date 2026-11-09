@@ -1,6 +1,7 @@
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,12 +22,14 @@ public class GameManager : MonoBehaviour
 
     PlayState playState;
     HumanStates[] humanStates;
+
     int minutes = 0;
     int seconds = 0;
-    bool isHidden;
     bool[] isFleeing;
     bool[] isPatrolling;
+
     [SerializeField] HumanAI[] humanAI = null;
+    [SerializeField] GameObject cameraObject = null;
     TimerManager timerManager;
 
     private void Start()
@@ -36,6 +39,18 @@ public class GameManager : MonoBehaviour
         humanStates = new HumanStates[humanAI.Length];
         isFleeing = new bool[humanAI.Length];
         isPatrolling = new bool[humanAI.Length];
+        bool isHidden;
+
+        /*if (cameraObject == null)
+        {
+            Debug.Log("カメラオブジェクトが設定されていません");
+            QuitGame();
+        }
+        if (Gamepad.current == null)
+        {
+            Debug.Log("コントローラーが接続されていません");
+            QuitGame();
+        }*/
 
         for (int i = 0; i < humanAI.Length; i++)
         {
@@ -56,6 +71,7 @@ public class GameManager : MonoBehaviour
         switch (playState)
         {
             case PlayState.Title:
+                // SceneManager.LoadScene("TitleScene");
                 // if(当たり判定)
                 SceneManager.LoadScene("GameScene");
                 break;
@@ -117,5 +133,16 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(humanAI[_index].PatrolCoroutine());
 
         isPatrolling[_index] = false;
+    }
+
+    private void QuitGame()
+    {
+        // アプリを終了
+        Application.Quit();
+
+        // Unityエディタ上でのテストプレイ時でも自動で停止させる
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #endif
     }
 }
