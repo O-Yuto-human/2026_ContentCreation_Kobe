@@ -124,7 +124,7 @@ public class PlayerController : MonoBehaviour
             freezeTime = 10.0f;
         }
 
-        if (freezeTime > 0.0f)
+        if (freezeTime > 0.0f)      
         {
             StartCoroutine(FreezeCoroutine(freezeTime));
         }
