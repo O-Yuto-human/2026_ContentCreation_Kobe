@@ -4,13 +4,14 @@ using System.Collections;
 
 public class HumanAI : MonoBehaviour
 {
+    int num = 0;
+    int exitNum = 0;
+    float escapeSpeed = 6.0f;
+    float normalSpeed = 1.0f;
+
     [SerializeField] Vector3[] destinations; // 目的地
     [SerializeField] Vector3[] exitPoints;
     [SerializeField] NavMeshAgent navMeshAgent;
-    float escapeSpeed = 6.0f;
-    float normalSpeed = 1.0f;
-    int num = 0;
-    int exitNum = 0;
 
     private void Start()
     {
@@ -25,6 +26,7 @@ public class HumanAI : MonoBehaviour
     public int HumanMoveSystem()
     {
         // 経路の計算が終わっているかつ、目的地までの残り距離が停止距離以下なら
+
         if (navMeshAgent.hasPath &&             // 目的地までの経路を持っているかつ
             !navMeshAgent.pathPending &&        // 目的地までの経路を計算中ではないかつ(bool)
             navMeshAgent.remainingDistance <=   // 目的地までの残りの距離
@@ -40,6 +42,7 @@ public class HumanAI : MonoBehaviour
     }
 
     // 目的地設定
+
     public void SetRandomDestination()
     {
         num = Random.Range(0, destinations.Length);
@@ -61,6 +64,7 @@ public class HumanAI : MonoBehaviour
     }
 
     // 逃げにつなげる処理
+
     public IEnumerator FleeCoroutine() // コルーチン 処理の途中で停止ができる。IEnumerator コルーチンを作るときに使う戻り値の型
     {
         navMeshAgent.isStopped = true;
@@ -75,6 +79,7 @@ public class HumanAI : MonoBehaviour
     }
 
     // 発見されたとき
+
     public bool IsEscaped()
     {
         if (navMeshAgent.hasPath && // 経路を持っているか

@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -31,13 +30,14 @@ public class GameManager : MonoBehaviour
     bool isSpawned; // テスト用
     bool[] isDespawned;
 
-    const float RESPAWN_TIME = 3.0f;
-
     [SerializeField] HumanAI[] humanAI = null;
     [SerializeField] GameObject cameraObject = null;
+    [SerializeField] PlayerController playerController;
+    [SerializeField] PlayerLookingController playerLookingController;
 
     TimerManager timerManager;
     SpawnSystem spawnSystem;
+    
 
     private void Start()
     {
@@ -85,6 +85,10 @@ public class GameManager : MonoBehaviour
                 break;
 
             case PlayState.Game:
+
+                playerController.PlayerMovement();
+                playerLookingController.PlayerLooking();
+
                 if (isSpawned == false)
                 {
                     spawnSystem.FirstSpawn();
@@ -169,7 +173,8 @@ public class GameManager : MonoBehaviour
     }
 
     // HumanAI.csで設定したコルーチンを受け取って、終わったかチェック
-    IEnumerator PatrolRoutine(int _index)
+
+    private IEnumerator PatrolRoutine(int _index)
     {
         yield return StartCoroutine(humanAI[_index].PatrolCoroutine());
 
