@@ -4,7 +4,7 @@ using System.Collections;
 
 using UnityEngine;
 
-public class GhostOutLook : MonoBehaviour
+public class ParentOutLook : MonoBehaviour
 
 {
 
@@ -52,33 +52,8 @@ public class GhostOutLook : MonoBehaviour
 
     }
 
-    void Update()
-
-    {
-
-        CheckSight();
-
-        if (isStopping)
-
-        {
-
-            Timer += Time.deltaTime;
-
-            if (Timer >= StopTime)
-
-            {
-
-                wayPointMove.PLAYER_SPEED = originSpeed;
-
-                isStopping = false;
-
-            }
-
-        }
-
-    }
-
-    void CheckSight()
+  
+    public void CheckSight()
 
     {
 
@@ -155,6 +130,23 @@ public class GhostOutLook : MonoBehaviour
                     isStopping = true;
                     Timer = 0.0f;
                 }
+
+            }
+
+        }
+
+        if (isStopping)
+        {
+
+            Timer += Time.deltaTime;
+
+            if (Timer >= StopTime)
+
+            {
+
+                wayPointMove.PLAYER_SPEED = originSpeed;
+
+                isStopping = false;
 
             }
 

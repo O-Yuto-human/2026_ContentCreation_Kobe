@@ -17,13 +17,8 @@ public class WayPointMove : MonoBehaviour
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
+    
+    public void ParentMove()
     {
         if (CheckPoints.Length == 0)//”z—ñ‚ª‹ó‚Å‚ ‚ê‚Î
             return;
@@ -45,7 +40,6 @@ public class WayPointMove : MonoBehaviour
                 CurrentPoint = 0;
             }
         }
-
     }
    
 }
