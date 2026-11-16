@@ -48,13 +48,17 @@ public class TrapManager : MonoBehaviour
             float distance = Vector3.Distance(transform.position, target.transform.position);
             if (distance <= EFFECTIVE_RANGE)
             {
-                // 人間に対して驚かせる処理を呼び出す
-                HumanReaction humanReaction = target.GetComponent<HumanReaction>();
-                if (humanReaction != null)
-                {
-                    humanReaction.GetTag(target.tag);
-                    affectedHumans.Add(target); // 範囲内だった人間をリストに追加
-                }
+                affectedHumans.Add(target);
+            }
+            
+        }
+
+        foreach (GameObject target in affectedHumans)
+        {
+            HumanReaction humanReaction = target.GetComponent<HumanReaction>();
+            if (humanReaction != null)
+            {
+                humanReaction.GetTag(target.tag);
             }
         }
 
