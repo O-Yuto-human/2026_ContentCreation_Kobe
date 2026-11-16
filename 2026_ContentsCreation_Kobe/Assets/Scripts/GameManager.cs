@@ -34,10 +34,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject cameraObject = null;
     [SerializeField] PlayerController playerController;
     [SerializeField] PlayerLookingController playerLookingController;
+    [SerializeField] TimerUI timerUI;
 
     TimerManager timerManager;
     SpawnSystem spawnSystem;
-    
 
     private void Start()
     {
@@ -165,6 +165,7 @@ public class GameManager : MonoBehaviour
                     SceneManager.LoadScene("ClearScene");
                     playState = PlayState.Finish;
                 }
+                timerUI.Timer(minutes,seconds);
                 break;
 
             case PlayState.Finish:
