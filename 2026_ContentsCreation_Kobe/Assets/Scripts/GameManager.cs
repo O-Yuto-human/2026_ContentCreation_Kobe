@@ -4,13 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    enum PlayState
-    {
-        Title,
-        Game,
-        Finish
-    }
-
     enum HumanStates
     {
         Hidden,
@@ -19,7 +12,6 @@ public class GameManager : MonoBehaviour
         Escaped
     }
 
-    PlayState playState;
     HumanStates[] humanStates;
 
     int minutes = 0;
@@ -32,23 +24,25 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] HumanAI[] humanAI = null;
     [SerializeField] GameObject cameraObject = null;
-    [SerializeField] PlayerController playerController;
-    [SerializeField] PlayerLookingController playerLookingController;
-    [SerializeField] TimerUI timerUI;
+    [SerializeField] PlayerController playerController = null;
+    [SerializeField] PlayerLookingController playerLookingController = null;
+    [SerializeField] TimerUI timerUI = null;
+    [SerializeField] ParentOutLook parentOutLook = null;
 
     TimerManager timerManager;
     SpawnSystem spawnSystem;
+    SceneController sceneController;
 
     private void Start()
     {
         spawnSystem = GetComponent<SpawnSystem>();
         timerManager = GetComponent<TimerManager>();
-        playState = PlayState.Game; // Title
         humanStates = new HumanStates[humanAI.Length];
         isFleeing = new bool[humanAI.Length];
         isPatrolling = new bool[humanAI.Length];
         respawnTime = new float[humanAI.Length];
         isDespawned = new bool[humanAI.Length];
+        parentOutLook.OnPlayerFound += OnPlayerFound; // 関数そのものの登録
 
         /*if (cameraObject == null)
         {
@@ -76,101 +70,87 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        switch (playState)
+        playerController.PlayerMovement();
+        playerLookingController.PlayerLooking();
+
+        ghostOutLook.CheckSight();
+
+        if (isSpawned == false)
         {
-            case PlayState.Title:
-                // SceneManager.LoadScene("TitleScene");
-                // if(当たり判定)
-                SceneManager.LoadScene("GameScene");
+            spawnSystem.FirstSpawn();
+            isSpawned = true;
+        }
+
+        for (int i = 0; i < humanAI.Length; i++)
+        {
+            switch (humanStates[i])
+            {
+                case HumanStates.Hidden:
+                // if(見つかったら)
+                // humanStates[i] = HumanStates.Flee;
                 break;
 
-            case PlayState.Game:
-
-                playerController.PlayerMovement();
-                playerLookingController.PlayerLooking();
-
-                if (isSpawned == false)
-                {
-                    spawnSystem.FirstSpawn();
-                    isSpawned = true;
-                }
-
-                for (int i = 0; i < humanAI.Length; i++)
-                {
-                    switch (humanStates[i])
-                    {
-                        case HumanStates.Hidden:
+                case HumanStates.Patrol:
+                    if (!isPatrolling[i] && humanAI[i].HumanMoveSystem() != -1)
+                        {
+                            StartCoroutine(PatrolRoutine(i));
+                            isPatrolling[i] = true;
+                        }                        
                         // if(見つかったら)
                         // humanStates[i] = HumanStates.Flee;
-                            break;
+                    break;
 
-                        case HumanStates.Patrol:
-                            if (!isPatrolling[i] && humanAI[i].HumanMoveSystem() != -1)
-                            {
-                                StartCoroutine(PatrolRoutine(i));
-                                isPatrolling[i] = true;
-                            }                        
-                            // if(見つかったら)
-                            // humanStates[i] = HumanStates.Flee;
-                            break;
-
-                        case HumanStates.Flee:
-                            if (!isFleeing[i])
-                            {
-                                humanAI[i].StartCoroutine(humanAI[i].FleeCoroutine()); // コルーチンを含んだ逃走処理開始
-                                isFleeing[i] = true;
-                            }
-                            if (humanAI[i].IsEscaped())
-                            {
-                                isFleeing[i] = false;
-                                humanStates[i] = HumanStates.Escaped;
-                            }
-                            break;
-
-                        case HumanStates.Escaped:
-                            if (isDespawned[i] == true)
-                            {
-                                humanAI[i].gameObject.SetActive(false);
-                                respawnTime[i] = spawnSystem.RespawnTimer(i);
-
-                                if (respawnTime[i] <= 0)
-                                {
-                                    spawnSystem.Respawn(i);
-                                    humanAI[i].gameObject.SetActive(true);
-                                    isDespawned[i] = false;
-
-                                    if (humanAI[i].CompareTag("Human"))
-                                    {
-                                        humanAI[i].SetRandomDestination(); // 再度目的地設定し、コルーチンの影響を無効に
-                                        humanStates[i] = HumanStates.Patrol;
-                                    }
-                                    else if (humanAI[i].CompareTag("HiddenHuman"))
-                                    {
-                                        humanStates[i] = HumanStates.Hidden;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                isDespawned[i] = true;
-                            }
-                                break;
+                case HumanStates.Flee:
+                    if (!isFleeing[i])
+                    {
+                        humanAI[i].StartCoroutine(humanAI[i].FleeCoroutine()); // コルーチンを含んだ逃走処理開始
+                        isFleeing[i] = true;
                     }
-                }
+                    if (humanAI[i].IsEscaped())
+                    {
+                        isFleeing[i] = false;
+                        humanStates[i] = HumanStates.Escaped;
+                    }
+                    break;
 
-                (minutes, seconds) = timerManager.TimerCalc(); // タプルで二個値が返ってきた
+                case HumanStates.Escaped:
+                    if (isDespawned[i] == true)
+                    {
+                        humanAI[i].gameObject.SetActive(false);
+                        respawnTime[i] = spawnSystem.RespawnTimer(i);
 
-                if (minutes <= 0 && seconds <= 0)
-                {
-                    SceneManager.LoadScene("ClearScene");
-                    playState = PlayState.Finish;
-                }
-                timerUI.Timer(minutes,seconds);
-                break;
+                        if (respawnTime[i] <= 0)
+                        { 
+                            spawnSystem.Respawn(i);
+                            humanAI[i].gameObject.SetActive(true);
+                            isDespawned[i] = false;
 
-            case PlayState.Finish:
-                break;
+                            if (humanAI[i].CompareTag("Human"))
+                            {
+                                humanAI[i].SetRandomDestination(); // 再度目的地設定し、コルーチンの影響を無効に
+                                humanStates[i] = HumanStates.Patrol;
+                            }
+                            else if (humanAI[i].CompareTag("HiddenHuman"))
+                            {
+                                humanStates[i] = HumanStates.Hidden;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        isDespawned[i] = true;
+                    }
+                    break;
+            }
         }
+
+        (minutes, seconds) = timerManager.TimerCalc(); // タプルで二個値が返ってきた
+
+        if (minutes <= 0 && seconds <= 0)
+        {
+            sceneController.ChangeScene();
+        }
+        timerUI.Timer(minutes,seconds);
     }
 
     // HumanAI.csで設定したコルーチンを受け取って、終わったかチェック
@@ -191,5 +171,17 @@ public class GameManager : MonoBehaviour
         #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
         #endif
+    }
+
+    private void OnPlayerFound(int found_count)
+    {
+        if (found_count == 1 || found_count == 2)
+        {
+            playerController.WasFound(found_count);
+        }
+        else if (found_count == 3)
+        {
+            sceneController.ChangeScene();
+        }
     }
 }
