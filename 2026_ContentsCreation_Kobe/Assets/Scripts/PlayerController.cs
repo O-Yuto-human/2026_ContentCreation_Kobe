@@ -44,6 +44,11 @@ public class PlayerController : MonoBehaviour
         {
             Move();
             FindTarget();
+
+            if (Input.GetKeyDown(KeyCode.Space) && currentTarget != null)
+            {
+                Surprised();
+            }
         }
 
         //if (Gamepad.current.aButton.wasPressedThisFrame && currentTarget != null)
@@ -53,24 +58,6 @@ public class PlayerController : MonoBehaviour
             Surprised();
         }
     }
-
-    private void Update()
-    {
-        if (isFreeze == false)
-        {
-            Move();
-            FindTarget();
-        }
-
-        //if (Gamepad.current.aButton.wasPressedThisFrame && currentTarget != null)
-        //{
-        if (Input.GetKeyDown(KeyCode.Space) && currentTarget != null)
-        {
-            Surprised();
-        }
-    }
-
-
 
     void Move()
     {
@@ -191,11 +178,8 @@ public class PlayerController : MonoBehaviour
                     break;
             }
         }
-    }
 
-    public int  AddScore()  //スコア加算時にGameManagerから呼び出す
-    {
-        return addScore;
+        //calcManager.addScere(addScore);
     }
 
     //エラーが発生した場合や、致命的な問題が発生した場合にゲームを終了する関数  

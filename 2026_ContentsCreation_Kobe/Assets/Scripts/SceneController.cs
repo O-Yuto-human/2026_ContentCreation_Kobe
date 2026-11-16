@@ -3,18 +3,11 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
 {
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            string currentSceneName = SceneManager.GetActiveScene().name;
-            ChangeScene(currentSceneName);
-        }
-    }
-
     // ˆø”‚ğ string Œ^‚É•ÏX
-    public void ChangeScene(string currentSceneName)
+    
+    public void ChangeScene()
     {
+        string currentSceneName = SceneManager.GetActiveScene().name;
         switch (currentSceneName)
         {
             case "TitleScene":
