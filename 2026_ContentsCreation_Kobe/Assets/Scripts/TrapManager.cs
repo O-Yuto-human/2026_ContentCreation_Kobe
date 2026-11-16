@@ -13,6 +13,7 @@ public class TrapManager : MonoBehaviour
 
     void Start()
     {
+        GameObject playerObject = null;
     }
 
     // トラップを発動する関数
@@ -24,12 +25,16 @@ public class TrapManager : MonoBehaviour
             return 0; // スコア加算なし
         }
 
-        switch(trap_type){
+        switch(trap_type)   //トラップの種類に応じて処理を分岐
+        {  
             case "Phone":
                 Debug.Log("電話を鳴らした");
                 break;
             case "LightDown":
                 Debug.Log("照明を消した");
+                break;
+            case "Coutellerie":
+                Debug.Log("カトラリーを動かした");
                 break;
         }
 
