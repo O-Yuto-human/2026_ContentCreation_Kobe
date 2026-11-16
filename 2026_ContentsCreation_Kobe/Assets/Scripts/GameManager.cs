@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] PlayerLookingController playerLookingController = null;
     [SerializeField] TimerUI timerUI = null;
     [SerializeField] ParentOutLook parentOutLook = null;
+    [SerializeField] WayPointMove wayPointMove = null;
 
     TimerManager timerManager;
     SpawnSystem spawnSystem;
@@ -72,8 +73,8 @@ public class GameManager : MonoBehaviour
     {
         playerController.PlayerMovement();
         playerLookingController.PlayerLooking();
-
-        ghostOutLook.CheckSight();
+        wayPointMove.ParentMove();
+        parentOutLook.CheckSight();
 
         if (isSpawned == false)
         {
