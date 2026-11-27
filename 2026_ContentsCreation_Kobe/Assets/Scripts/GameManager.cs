@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -174,6 +173,7 @@ public class GameManager : MonoBehaviour
         #endif
     }
 
+    // プレイヤーが見つかった時に呼び出す関数
     private void OnPlayerFound(int found_count)
     {
         if (found_count == 1 || found_count == 2)
